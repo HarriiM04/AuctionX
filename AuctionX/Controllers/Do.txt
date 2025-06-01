@@ -1,0 +1,64 @@
+﻿namespace AuctionX.Controllers
+{
+    public class Do
+    {
+
+
+    }
+}
+
+
+http://localhost:5011/Organizer/ViewTournament/2 
+here provide redirect to manageteam or add same button over here also for assign captain and view players
+
+http://localhost:5011/Organizer/ViewTeamPlayers?teamId=1
+improve ui over here
+
+http://localhost:5011/Organizer/TournamentPlayersList/4
+here also provide sports category field
+
+http://localhost:5011/Auction/LiveAuction
+chnage the ui
+
+http://localhost:5011/Organizer/Profile
+change the ui
+
+http://localhost:5011/Organizer/ChangePassword/1
+change the ui
+
+http://localhost:5011/Admin/
+add the sport and sport add category page
+
+http://localhost:5011/Player/Dashboard
+add one notification alert for checking if the player is selected for tournament or not basically status and updates of auction
+improve ui over here
+
+http://localhost:5011/Player/TournamentDetails/1
+remove bid configuration
+improve ui over here
+
+http://localhost:5011/Player/MyTournament?sportId=
+improve ui over here
+
+http://localhost:5011/Player/Profile
+update based on organizer profile and update ui + add change password + update profile + add sports and sport categories 
+
+http://localhost:5011/Bidder/Dashboard
+update this
+
+http://localhost:5011/Bidder/TeamManagement
+update ui 
++ add more options such as edit team details
++ status like team is completed or players are left 
+
++ add check user logged in or not in each method
+
++ at last add voice for bids and more like celebration ui animation 
+
++ add validation like there should be minimum this player count for the auction start
++ add auction date field in tournament table
+
++ inhance the footer 
+
+
+

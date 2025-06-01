@@ -1,0 +1,22 @@
+﻿@model AuctionX.ViewModels.BidderDashboardViewModel
+
+@{
+    ViewData["Title"] = "Bidder Dashboard";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    <h3>Welcome, @Model.PlayerName</h3>
+    <p><strong>Tournament:</strong> @Model.TournamentName</p>
+    <p><strong>Team:</strong> @Model.TeamName</p>
+</div>
+
+<li><a asp-controller="PlayerBidder" asp-action="Dashboard" class="nav-link">Go To Player Panel</a></li>
+
+@if (Model.IsBidder)
+{
+    <div>
+        <a asp-controller="Bidder" asp-action="Dashboard" class="btn btn-danger">Go to Captain Panel</a>
+    </div>
+}

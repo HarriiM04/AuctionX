@@ -1,0 +1,54 @@
+﻿@model AuctionX.ViewModels.PlayerCreateViewModel
+
+@{
+    ViewData["Title"] = "Create Player";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h2 class="h4 text-center mb-4">Create Player</h2>
+
+                    <form asp-action="CreatePlayer" method="post">
+                        <div class="form-group mb-3">
+                            <label for="Name" class="form-label">Name</label>
+                            <input type="text" id="Name" name="Name" class="form-control" required />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="Email" class="form-label">Email</label>
+                            <input type="email" id="Email" name="Email" class="form-control" required />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="Password" class="form-label">Password</label>
+                            <input type="password" id="Password" name="Password" class="form-control" required />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="MobileNumber" class="form-label">Mobile Number</label>
+                            <input type="text" id="MobileNumber" name="MobileNumber" class="form-control" required />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="Description" class="form-label">Description</label>
+                            <textarea id="Description" name="Description" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="AvailabilityStatus" class="form-label">Availability Status</label>
+                            <input type="text" id="AvailabilityStatus" name="AvailabilityStatus" class="form-control" required />
+                        </div>
+
+                        <div class="d-flex justify-content-center">
+                            <button type="submit" class="btn btn-success px-4">Create Player</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

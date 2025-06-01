@@ -1,0 +1,73 @@
+﻿@model AuctionX.ViewModels.OrganizerTeamsViewModel
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+
+<h2 class="mb-4">Teams</h2>
+
+<form method="get" asp-action="OrganizerTeams" class="mb-3">
+    <select name="tournamentId" class="form-control d-inline w-auto me-2">
+        <option value="">All Tournaments</option>
+        @foreach (var t in Model.Tournaments)
+        {
+            <option value="@t.Id" @@(t.Id == Model.SelectedTournamentId ? "selected" : "")>@t.Name</option>
+        }
+    </select>
+
+    <select name="sportId" class="form-control d-inline w-auto me-2">
+        <option value="">All Sports</option>
+        @foreach (var s in Model.Sports)
+        {
+            <option value="@s.Id" @@(s.Id == Model.SelectedSportId ? "selected" : "")>@s.Name</option>
+        }
+    </select>
+
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Team Name</th>
+            <th>Budget</th>
+            <th>Tournament</th>
+            <th>Sport</th>
+           
+            <th>Captain</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var team in Model.Teams)
+        {
+            <tr>
+                <td>@team.TeamName</td>
+                <td>@team.Budget</td>
+                <td>@team.Tournament.Name</td>
+                <td>@team.Tournament.Sport.Name</td>
+               
+                <td>
+                    @if (!team.CaptainId.HasValue)
+                    {
+                        <a class="btn btn-warning btn-sm" asp-action="AssignCaptain" asp-route-teamId="@team.Id" asp-route-tournamentId="@team.TournamentId">
+                            Assign Captain
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Captain Assigned</span>
+                    }
+                    </td>
+                    <td>
+                    <a class="btn btn-info btn-sm" asp-action="ViewTeamPlayers" asp-route-teamId="@team.Id">View Players</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

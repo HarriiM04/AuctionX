@@ -1,0 +1,143 @@
+﻿@{
+    ViewData["Title"] = "Live Auction";
+    var tournamentId = ViewBag.TournamentId;
+    var currentPlayer = ViewBag.CurrentPlayer as AuctionX.Models.Player;
+}
+
+<style>
+    /* Your existing styles */
+    .timer-display {
+        font-size: 2rem;
+        color: #ff6b6b;
+        margin: 10px 0;
+    }
+</style>
+
+<h2>Live Auction - Tournament @tournamentId</h2>
+
+<div id="currentAuction" class="container">
+    <h3>Current Player: <span id="playerName">@currentPlayer?.User?.Name</span></h3>
+    <img id="playerPhoto" src="@currentPlayer?.Photo" alt="Player Image" style="max-width: 200px;" />
+    <p id="playerDescription">@currentPlayer?.Description</p>
+    <h3>Current Bid: $<span id="currentBid">0.00</span></h3>
+    <div class="timer-display" id="timer">10.00</div>
+</div>
+
+<div id="bidFormContainer" class="card p-3">
+    <h4>Place a Bid</h4>
+    <form id="bidForm">
+        <input type="hidden" id="tournamentId" value="@tournamentId" />
+        <input type="hidden" id="playerId" value="@currentPlayer?.Id" />
+        <div class="mb-2">
+            <label for="bidAmount" class="form-label">Bid Amount</label>
+            <input type="number" class="form-control" id="bidAmount" step="0.01" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Place Bid</button>
+    </form>
+</div>
+
+<div id="auctionStatus"></div>
+<div id="bidHistory" class="mt-3"></div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script>
+        let timeRemaining = 10000; // 10 seconds in ms
+        let timerInterval;
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/auctionHub", {
+                accessTokenFactory: () => localStorage.getItem('authToken')
+            })
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        // Start the connection
+        connection.start()
+            .then(() => {
+                console.log("SignalR connected.");
+                const tournamentId = document.getElementById("tournamentId").value;
+                connection.invoke("JoinAuction", tournamentId);
+            })
+            .catch(err => console.error(err.toString()));
+
+        // Update UI when new player auction starts
+        connection.on("PlayerAuctionStarted", (player) => {
+            document.getElementById("playerName").innerText = player.Name;
+            document.getElementById("playerPhoto").src = player.Photo;
+            document.getElementById("playerDescription").innerText = player.Description;
+            document.getElementById("playerId").value = player.Id;
+            document.getElementById("currentBid").innerText = "0.00";
+
+            // Reset timer
+            clearInterval(timerInterval);
+            timeRemaining = 10000;
+            updateTimerDisplay();
+            startTimer();
+        });
+
+        // Handle new bids
+        connection.on("ReceiveBid", (bid) => {
+            document.getElementById("currentBid").innerText = bid.BidAmount.toFixed(2);
+
+            // Add to bid history
+            const bidHistory = document.getElementById("bidHistory");
+            const bidEntry = document.createElement("div");
+            bidEntry.innerHTML = `
+                <p>${bid.BidderName} (${bid.TeamName}) bid $${bid.BidAmount.toFixed(2)}</p>
+            `;
+            bidHistory.prepend(bidEntry);
+
+            // Reset timer
+            timeRemaining = bid.TimeRemaining;
+            updateTimerDisplay();
+        });
+
+        // Handle timer expiration
+        connection.on("TimerExpired", (playerId) => {
+            document.getElementById("auctionStatus").innerHTML = `
+                <div class="alert alert-warning">Auction for this player has ended!</div>
+            `;
+            clearInterval(timerInterval);
+            document.getElementById("timer").innerText = "0.00";
+
+            // Disable bidding
+            document.getElementById("bidForm").style.display = "none";
+        });
+
+        // Timer functions
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeRemaining -= 100;
+                updateTimerDisplay();
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                }
+            }, 100);
+        }
+
+        function updateTimerDisplay() {
+            const seconds = (timeRemaining / 1000).toFixed(2);
+            document.getElementById("timer").innerText = seconds;
+        }
+
+        // Handle bid submission
+        document.getElementById("bidForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const playerId = document.getElementById("playerId").value;
+            const tournamentId = document.getElementById("tournamentId").value;
+            const bidAmount = document.getElementById("bidAmount").value;
+
+            connection.invoke("PlaceBid", playerId, tournamentId, parseFloat(bidAmount))
+                .catch(err => console.error(err.toString()));
+
+            document.getElementById("bidAmount").value = "";
+        });
+
+        // Initialize timer
+        startTimer();
+    </script>
+}

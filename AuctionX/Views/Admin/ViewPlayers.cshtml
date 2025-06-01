@@ -1,0 +1,72 @@
+﻿@model List<AuctionX.ViewModels.PlayerStatusViewModel>
+
+<div class="container mt-4">
+    <h2>Players in Tournament</h2>
+
+    <!-- Filter Form -->
+    <form method="get" asp-action="ViewPlayers" class="row g-3 align-items-center mb-3">
+        <input type="hidden" name="tournamentId" value="@ViewBag.TournamentId" />
+
+        <div class="col-md-4">
+            <input type="text" name="searchQuery" value="@ViewBag.SearchQuery" class="form-control" placeholder="Search by player name..." />
+        </div>
+
+        <div class="col-md-3">
+            <select name="statusFilter" class="form-select">
+                <option value="">All Statuses</option>
+                <option value="SOLD" @@(ViewBag.StatusFilter == "SOLD" ? "selected" : "")>SOLD</option>
+                <option value="UNSOLD" @@(ViewBag.StatusFilter == "UNSOLD" ? "selected" : "")>UNSOLD</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filter</button>
+        </div>
+    </form>
+
+    <!-- Conditional Data Display -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>Player Name</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var player in Model)
+                    {
+                        <tr>
+                            <td>@player.PlayerName</td>
+                            <td>
+                                @if (player.Status == "SOLD")
+                                {
+                                    <span class="badge bg-success">SOLD</span>
+                                }
+                                else if (player.Status == "UNSOLD")
+                                {
+                                    <span class="badge bg-secondary">UNSOLD</span>
+                                }
+                                else
+                                {
+                                    @player.Status
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            No players found for the current search or filter criteria.
+        </div>
+    }
+
+    <!-- Back Button -->
+    <a asp-action="ViewTournament" asp-route-id="@ViewBag.TournamentId" class="btn btn-secondary mt-3">Back</a>
+</div>

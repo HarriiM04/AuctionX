@@ -1,0 +1,58 @@
+﻿@model AuctionX.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="h3 mb-3 text-black text-center">Sign In / Sign Up </h2>
+            <div class="p-4 border bg-white shadow rounded-3">
+
+                <form asp-action="Login" method="post">
+                    <div class="form-group mb-4">
+                        <label asp-for="Email" class="text-black">Email</label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label asp-for="Password" class="text-black">Password</label>
+                        <input asp-for="Password" type="password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group d-flex justify-content-between">
+                        <button type="submit" class="btn btn-black btn-sm">Login</button>
+                        <a class="btn btn-danger btn-sm" href="@Url.Action("GoogleLogin", "Account")"> <i class="fab fa-google"></i> Continue with Google</a>
+                    </div>
+                </form>
+
+             
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center my-3">
+    <div class="text-center">
+        <small class="text-muted">
+            New Players must use the <strong>Google Login</strong> button for Registration.
+        </small>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @if (TempData["InstructionWarning"] != null)
+    {
+        @await Html.PartialAsync("_InstructionWarning", TempData["InstructionWarning"])
+    }
+
+
+}

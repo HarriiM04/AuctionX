@@ -1,0 +1,73 @@
+﻿@model AuctionX.Models.Tournament
+
+@{
+    ViewData["Title"] = "Edit Tournament";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <h2 class="text-center mb-4">Edit Tournament</h2>
+
+            <form asp-action="EditTournament" method="post" enctype="multipart/form-data" novalidate>
+                <!-- Hidden Field for Tournament ID -->
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Date" class="form-label"></label>
+                    <input asp-for="Date" type="date" class="form-control" />
+                    <span asp-validation-for="Date" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Venue" class="form-label"></label>
+                    <input asp-for="Venue" class="form-control" />
+                    <span asp-validation-for="Venue" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="SportId" class="form-label">Sport</label>
+                    <select asp-for="SportId" class="form-control" asp-items="ViewBag.Sports"></select>
+                    <span asp-validation-for="SportId" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="OrganizerId" class="form-label">Organizer</label>
+                   
+                    <input asp-for="OrganizerId" class="form-control" value="@Model.Organizer.User.Name" readonly />
+                    <span asp-validation-for="OrganizerId" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Logo</label>
+                    <input type="file" name="logoFile" class="form-control" />
+                    @if (!string.IsNullOrEmpty(Model.Logo))
+                    {
+                        <p class="mt-2">Current Logo:</p>
+                        <img src="~/src/@Model.Logo" width="150" class="img-thumbnail" />
+                    }
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Update Tournament</button>
+                    <a asp-action="Tournaments" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @if (TempData["InstructionWarning"] != null)
+    {
+        @await Html.PartialAsync("_InstructionWarning", TempData["InstructionWarning"])
+    }
+}

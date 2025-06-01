@@ -1,0 +1,495 @@
+﻿@model AuctionX.ViewModels.LiveAuctionViewModel
+
+@{
+    var minBid = Model.BidSettings.MinBid;
+    var team = Model.Teams.FirstOrDefault(t => t.TeamName == Model.BidderTeamName);
+    var teamBudget = team?.Budget ?? 0;
+}
+
+<style>
+    #playerQueueInfo .card {
+        background-color: #f8f9fa;
+        transition: all 0.3s ease-in-out;
+    }
+
+        #playerQueueInfo .card:hover {
+            transform: scale(1.01);
+        }
+</style>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<div class="container mt-5">
+    <!-- Tournament and User Info Section -->
+    <div class="row">
+        <div class="col-12 text-center mb-4">
+            <h2 class="display-4">@Model.Tournament.Name - Live Auction</h2>
+            <h4 class="text-muted">Tournament ID: @Model.Tournament.Id</h4>
+        </div>
+
+        <!-- Organizer and User Info -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3"><i class="bi bi-person-gear me-2"></i>Organizer</h5>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-envelope-fill me-2 text-muted"></i>
+                            <span>@Model.OrganizerEmail</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3"><i class="bi bi-person-circle me-2"></i>Logged-in User</h5>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-person-fill me-2 text-muted"></i>
+                            <span>@ViewBag.UserName</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-envelope-fill me-2 text-muted"></i>
+                            <span>@ViewBag.UserEmail</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-person-badge-fill me-2 text-muted"></i>
+                            <span>@ViewBag.UserRole</span>
+                        </div>
+                        @if (ViewBag.IsBidder != null && ViewBag.IsBidder)
+                        {
+                            <span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i>Bidder</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Bidding Teams Section -->
+    <!-- Teams Table -->
+    <div class="mb-5">
+        <h4 class="mb-3 border-bottom pb-2">Participating Teams</h4>
+        @if (Model.Teams.Any())
+        {
+            <!-- Scrollable Table Wrapper -->
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                <table class="table table-hover table-bordered align-middle text-center">
+                    <thead class="table-dark sticky-top">
+                        <tr>
+                            <th>Team Name   </th>
+                            <th>Captain</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var teamItem in Model.Teams)
+                        {
+                            <tr>
+                                <td>@teamItem.TeamName</td>
+                                <td>@teamItem.Captain?.Player?.User?.Name</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">No teams registered yet.</div>
+        }
+    </div>
+
+
+    @if (ViewBag.ExcludedBidders != null)
+    {
+        <div class="alert alert-warning mt-3">
+            <strong>Excluded Bidders (Player IDs):</strong> @string.Join(", ", ViewBag.ExcludedBidders)
+        </div>
+    }
+
+    <!-- Add check for organizer -->
+
+    </div>
+<div class="row mt-5 mb-5">
+    <!-- Players Purchased by Each Team -->
+    <div class="col-md-6">
+        <h4 class="mb-3 border-bottom pb-2">Players Purchased by Each Team</h4>
+        
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle text-center" id="teamPlayerCountsTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Team Name</th>
+                        <th>Players Bought</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var teamInfo in Model.Teams)
+                    {
+                        <tr data-team-id="@teamInfo.Id">
+                            <td>@teamInfo.TeamName</td>
+                            <td class="player-count fw-semibold">0</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+                <p><strong>Players Required per Team:</strong> @Model.BidSettings.PlayersPerTeam</p>
+        </div>
+    </div>
+
+    <!-- Player Stats -->
+    <div class="col-md-6">
+        <h4 class="mb-3 border-bottom pb-2">Player Stats</h4>
+        <table class="table table-hover table-bordered align-middle text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Player</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+            <tbody>
+                <tr>
+                    <th>Total Players in Auction</th>
+                    <td id="totalPlayers">--</td>
+                </tr>
+                <tr>
+                    <th>Remaining Unsold Players</th>
+                    <td id="unsoldPlayers">--</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+      @if (Model.UserRole == "Organizer" && Model.OrganizerEmail == @ViewBag.UserEmail) 
+    {
+        <div class="mt-3 text-center">
+            <button class="btn btn-success me-3" onclick="startAuction()">Start Auction</button>
+            <button class="btn btn-danger" onclick="pauseAuction()">Pause Auction</button>
+        </div>
+        <div class="text-center mt-3">
+            <button class="btn btn-warning" onclick="finalizeBid()" id="btnFinalizeBid">Finalize Current Bid</button>
+        </div>
+    }
+
+<div class="container mt-5">
+<!-- Player Details and Bidding Section -->
+<div class="row mt-4">
+    <!-- Left Side: Player Details and Queue Info -->
+    <div class="col-md-6">
+        <!-- Player Queue Info -->
+        <div id="playerQueueInfo" class="alert alert-info mb-4">
+            Loading current player...
+        </div>
+
+        <!-- Player Details Card -->
+        <div id="playerDetails" class="card mb-4" style="display: none;">
+            <div class="row g-0">
+                <div class="col-md-4 text-center">
+                    <img id="playerPhoto" src="" class="img-fluid rounded-circle" alt="Player Photo" style="max-width: 120px; max-height: 120px;">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 id="playerName" class="card-title"></h5>
+                        <p id="playerDescription" class="card-text"></p>
+                        <p id="playerMobile" class="card-text"><small class="text-muted"></small></p>
+                        <div id="playerSports" class="card-text">
+                            <strong>Sports:</strong>
+                            <ul class="list-unstyled"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Side: Bidding Section -->
+    <div class="col-md-6">
+        <!-- Auction Timer Section -->
+        <div id="timer" class="alert alert-warning mb-4">
+            <strong>Bidding Time Left:</strong> <span id="secondsLeft">--</span> seconds
+        </div>
+
+
+
+        @if (ViewBag.IsBidder != null && ViewBag.IsBidder)
+        {
+            <div>
+                <h4>Live Bidding</h4>
+                <div class="mb-3">
+                    <label>Team Name</label>
+                    <input type="text" id="teamName" class="form-control" value="@ViewBag.BidderTeamName" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label>Bid Amount (₹)</label>
+                    <div class="input-group">
+                        <button type="button" class="btn btn-outline-danger" onclick="decrementBid()" id="btnDecrement">−</button>
+                        <input type="number" id="bidAmount" class="form-control" readonly />
+                        <button type="button" class="btn btn-outline-primary" onclick="incrementBid()" id="btnIncrement">+</button>
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <strong>Team Budget: ₹<span id="teamBudget">@teamBudget</span></strong>
+                </div>
+
+                <div class="mb-2">
+                    <strong>Remaining Budget: ₹<span id="remainingBudget">@teamBudget</span></strong>
+                </div>
+
+                <button class="btn btn-primary" onclick="submitBid()" id="btnPlaceBid">Place Bid</button>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-secondary mt-3">
+                <strong>Note:</strong> Only authorized bidders can place bids. You can view the live auction updates.
+            </div>
+        }
+
+        <p id="currentBid" class="mt-3 text-success fw-bold">No bids yet</p>
+    </div>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/auctionHub")
+        .build();
+
+    const tournamentId = @Model.Tournament.Id;
+
+
+    // Declare function placeholders globally
+       window.startAuction = function () {
+        connection.invoke("StartAuction", tournamentId);
+    };
+
+    window.pauseAuction = () => console.warn("Connection not ready yet");
+    window.submitBid = () => console.warn("Connection not ready yet");
+    window.finalizeBid = () => console.warn("Connection not ready yet");
+
+    let minBid = @minBid;
+    let currentBid = minBid;
+    let teamBudget = @teamBudget;
+    const bidInput = document.getElementById("bidAmount");
+    let playersPerTeam = @Model.BidSettings.PlayersPerTeam;
+
+
+      const btnIncrement = document.getElementById("btnIncrement");
+    const btnDecrement = document.getElementById("btnDecrement");
+    const btnPlaceBid = document.getElementById("btnPlaceBid");
+    const btnFinalizeBid = document.getElementById("btnFinalizeBid");
+
+
+    // Setup event handlers
+       connection.on("NewPlayerForBidding", function (player) {
+              document.getElementById("playerQueueInfo").innerHTML = `
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center text-md-start">
+                    <div class="d-flex flex-column flex-md-row align-items-center">
+                        <img src="/images/players/${player.photo}"
+                             alt="${player.user.name}'s photo"
+                             class="rounded-circle border border-2 mb-3 mb-md-0 me-md-3"
+                             style="width: 100px; height: 100px; object-fit: cover;" />
+
+                        <div>
+                            <h5 class="card-title mb-1">${player.user.name}</h5>
+                            <p class="mb-1 text-muted"><i class="bi bi-telephone-fill me-1"></i>${player.mobileNumber}</p>
+                            <span class="badge bg-${player.availabilityStatus === 'Available' ? 'success' : 'secondary'} mb-2">
+                                ${player.availabilityStatus}
+                            </span>
+                            <p class="card-text mb-0 small">${player.description || 'No description available.'}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        currentBid = minBid;
+        document.getElementById("bidAmount").value = currentBid;
+        document.getElementById("currentBid").innerText = "No bids yet";
+        document.getElementById("secondsLeft").innerText = "--";
+
+        // Re-enable bidding for new player
+        btnIncrement.disabled = false;
+        btnDecrement.disabled = false;
+        btnPlaceBid.disabled = false;
+        updateRemaining();
+    });
+
+       connection.on("ReceiveBid", function (teamName, bidAmount, playerId) {
+        currentBid = bidAmount;
+        document.getElementById("currentBid").innerText =
+            `Current highest bid: ₹${bidAmount} by ${teamName}`;
+
+        const currentTeam = document.getElementById("teamName")?.value;
+
+
+        updateRemaining();
+    });
+    
+    connection.on("PlayerSold", function (playerId, teamName, amount) {
+        alert(`Player ID ${playerId} sold to ${teamName} for ₹${amount}`);
+        const currentTeamName = document.getElementById("teamName").value;
+         if (teamName === currentTeamName) {
+        teamBudget -= amount;
+        document.getElementById("teamBudget").textContent = teamBudget;
+
+
+
+        updateRemaining();
+    }
+
+
+    });
+
+    connection.on("PlayerUnsold", function (playerId) {
+        alert(`Player ID ${playerId} received no bids and was marked as UNSOLD.`);
+    });
+
+       connection.on("AuctionEnded", function () {
+        alert("Auction has ended. All players have been bid on.");
+
+        // Enable Finalize button when auction is ended
+        document.getElementById("btnFinalizeBid").disabled = false;
+    });
+
+           connection.on("TimerUpdate", function (seconds) {
+        document.getElementById("secondsLeft").innerText = seconds > 0 ? seconds : "Time's up!";
+
+        // Disable Finalize button when the timer is running
+        document.getElementById("btnFinalizeBid").disabled = (seconds > 0);
+    });
+
+      connection.on("TimerPaused", function () {
+        document.getElementById("secondsLeft").innerText = "--";
+
+        // Enable Finalize button when the timer is paused
+        document.getElementById("btnFinalizeBid").disabled = false;
+    });
+
+    connection.on("NextPlayerCountdown", function (seconds) {
+        document.getElementById("playerQueueInfo").innerHTML =
+            `<strong>Next player in:</strong> ${seconds} seconds`;
+
+        // Disable bidding during countdown
+        btnIncrement.disabled = true;
+        btnDecrement.disabled = true;
+        btnPlaceBid.disabled = true;
+        btnFinalizeBid.disabled= true;
+     
+    });
+
+
+    connection.on("ShowError", function (message) {
+        alert(message);
+    });
+
+        connection.on("UpdateTeamPlayerCounts", function (teamPlayerCounts) {
+        teamPlayerCounts.forEach(item => {
+            const row = document.querySelector(`#teamPlayerCountsTable tr[data-team-id="${item.teamId}"]`);
+            if (row) {
+                row.querySelector(".player-count").innerText = item.count;
+            }
+        });
+    });
+
+        connection.on("UpdatePlayerStats", function (totalPlayers, unsoldPlayers) {
+        document.getElementById("totalPlayers").innerText = totalPlayers;
+        document.getElementById("unsoldPlayers").innerText = unsoldPlayers;
+    });
+
+
+    // Start SignalR connection and bind functions after it connects
+    connection.start().then(() => {
+        const players = @Html.Raw(Json.Serialize(Model.TournamentPlayers));
+        connection.invoke("InitializeQueue", players);
+
+        const bidInput = document.getElementById("bidAmount");
+
+           window.submitBid = function () {
+            const teamName = document.getElementById("teamName").value;
+            const bidAmount = parseInt(bidInput.value);
+
+            // Budget check
+            if (bidAmount > teamBudget) {
+                alert("Bid exceeds team budget!");
+                return;
+            }
+
+            // Find the table row for the selected team
+            const teamRows = document.querySelectorAll("#teamPlayerCountsTable tbody tr");
+            let playerCount = 0;
+            teamRows.forEach(row => {
+                const teamCell = row.querySelector("td:first-child");
+                if (teamCell && teamCell.textContent.trim() === teamName.trim()) {
+                    const countCell = row.querySelector(".player-count");
+                    playerCount = parseInt(countCell.textContent.trim());
+                }
+            });
+
+            // Player count check
+            if (playerCount >= playersPerTeam) {
+                alert("This team has already bought the maximum number of players.");
+                return;
+            }
+
+            // Send the bid
+            connection.invoke("SendBid", teamName, bidAmount);
+        };
+
+        window.finalizeBid = function () {
+            connection.invoke("FinalizeCurrentBid");
+        };
+
+         window.startAuction = function () {
+        connection.invoke("StartAuction", tournamentId)  // Pass TournamentId to StartAuction
+            .then(() => {
+                // After saving, broadcast team and player stats
+                connection.invoke("BroadcastTeamPlayerCounts", tournamentId);
+                connection.invoke("BroadcastPlayerStats", tournamentId);
+            })
+            .catch(err => console.error("Error starting auction:", err));
+    };
+
+        window.pauseAuction = function () {
+            connection.invoke("PauseAuction");
+        };
+
+        // Initialize bid input and remaining budget
+        currentBid = minBid;
+        bidInput.value = currentBid;
+        updateRemaining();
+
+    }).catch(err => console.error("Connection error:", err.toString()));
+
+
+        function incrementBid() {
+        if ((currentBid + minBid) <= teamBudget) {
+            currentBid += minBid;
+            bidInput.value = currentBid;
+            updateRemaining();
+        } else {
+            alert("Cannot increase bid beyond current team budget.");
+        }
+    }
+
+    function decrementBid() {
+        if ((currentBid - minBid) >= minBid) {
+            currentBid -= minBid;
+            bidInput.value = currentBid;
+            updateRemaining();
+        } else {
+            alert(`Bid cannot go below the minimum allowed bid.`);
+        }
+    }
+
+
+    function updateRemaining() {
+        const remaining = teamBudget - currentBid;
+        document.getElementById("remainingBudget").textContent = remaining >= 0 ? remaining : 0;
+    }
+</script>

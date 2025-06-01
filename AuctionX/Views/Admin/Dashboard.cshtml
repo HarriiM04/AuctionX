@@ -1,0 +1,72 @@
+﻿@model AuctionX.ViewModels.AdminDashboardViewModel
+
+<style>
+        .card-title,
+    .card-text {
+        color: black;
+    }
+
+</style>
+<div class="container">
+    <h1>Admin Dashboard</h1>
+
+    @if (ViewBag.WelcomeMessage != null)
+    {
+        <div class="alert alert-success">
+            @ViewBag.WelcomeMessage
+        </div>
+    }
+
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Organizers</h5>
+                    <p class="card-text">@Model.TotalOrganizers</p>
+                </div>
+            </div>
+        </div>
+       
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Players</h5>
+                    <p class="card-text">@Model.TotalPlayers</p>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Teams</h5>
+                    <p class="card-text">@Model.TotalTeams</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Tournaments</h5>
+                    <p class="card-text">@Model.TotalTournaments</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <p class="text-muted">
+            Welcome to the Admin Dashboard. Here you can monitor the overall statistics of your auction platform, including organizers, players, teams, and tournaments.
+            Use the navigation menu to manage data and oversee ongoing activities.
+        </p>
+    </div>
+
+    <div class="mt-4 text-center">
+        <p class="text-muted">
+           
+        </p>
+    </div>
+
+</div>

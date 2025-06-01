@@ -1,0 +1,65 @@
+﻿@model AuctionX.ViewModels.PlayerEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Player";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <h2 class="text-center mb-4">Edit Player</h2>
+
+            <form asp-action="EditPlayer" method="post" novalidate>
+                <!-- Hidden Field for Player ID -->
+                <input type="hidden" name="Id" value="@Model.Id" />
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="MobileNumber" class="form-label"></label>
+                    <input asp-for="MobileNumber" class="form-control" />
+                    <span asp-validation-for="MobileNumber" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="AvailabilityStatus" class="form-label">Availability Status</label>
+                    <select asp-for="AvailabilityStatus" class="form-control">
+                        <option value="Available" @@(Model.AvailabilityStatus == "Available" ? "selected" : "")>Available</option>
+                        <option value="Unavailable" @@(Model.AvailabilityStatus == "Unavailable" ? "selected" : "")>Unavailable</option>
+                    </select>
+                    <span asp-validation-for="AvailabilityStatus" class="text-danger small"></span>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Update Player</button>
+                    <a asp-action="Players" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @if (TempData["InstructionWarning"] != null)
+    {
+        @await Html.PartialAsync("_InstructionWarning", TempData["InstructionWarning"])
+    }
+}

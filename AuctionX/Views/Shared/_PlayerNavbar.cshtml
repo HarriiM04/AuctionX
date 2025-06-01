@@ -1,0 +1,23 @@
+﻿
+
+<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+    <li class="nav-item active"><a class="nav-link" asp-controller="Player" asp-action="Dashboard">Dashboard</a></li>
+    <li><a class="nav-link" asp-controller="Player" asp-action="MyTournament">My Tournament</a></li>
+    <li><a class="nav-link" asp-controller="Auction" asp-action="LiveAuction">Live Auction</a></li>
+
+    @if (ViewBag.IsBidder as bool? ?? false)
+    {
+        <li><a class="btn btn-black btn-sm btn-block" asp-controller="Bidder" asp-action="Dashboard">Go to Captain Panel</a></li>
+    }
+
+
+</ul>
+
+<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+    <li><a class="nav-link" asp-controller="Player" asp-action="Profile"><img src="~/images/user.svg"></a></li>
+    <li><partial name="_LoginPartial" /></li>
+</ul>
+
+
+
+----

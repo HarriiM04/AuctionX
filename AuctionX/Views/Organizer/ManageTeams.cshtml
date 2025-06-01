@@ -1,0 +1,49 @@
+﻿@model List<AuctionX.Models.Team>
+
+@{
+    ViewData["Title"] = "Teams Overview";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">All Teams Overview</h2>
+
+    @if (Model.Any())
+    {
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>Team Name</th>
+                    <th>Budget</th>
+                    <th>Tournament</th>
+                    <th>Captain</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var team in Model)
+                {
+                    <tr>
+                        <td>@team.TeamName</td>
+                        <td>@team.Budget</td>
+                        <td>@team.Tournament?.Name</td>
+                        <td>
+                            @if (team.Captain != null)
+                            {
+                                @team.Captain.Player?.User?.Name
+                            }
+                            else
+                            {
+                                <span class="text-muted">No Captain</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-muted">No teams found.</p>
+    }
+
+    <a asp-action="Dashboard" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>

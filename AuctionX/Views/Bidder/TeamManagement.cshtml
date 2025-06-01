@@ -1,0 +1,35 @@
+﻿
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    var teamName = (string)ViewData["TeamName"];
+    var tournamentName = (string)ViewData["TournamentName"];
+    var players = ViewData["TeamPlayers"] as List<string> ?? new List<string>();
+}
+
+<h2>Team Management</h2>
+
+<div class="card p-4 shadow-sm mb-4">
+    <h4 class="text-primary">Team: @teamName</h4>
+    <p><strong>Tournament:</strong> @tournamentName</p>
+</div>
+
+@if (players.Any())
+{
+    <h5>Players on your team:</h5>
+    <ul class="list-group">
+        @foreach (var name in players)
+        {
+            <li class="list-group-item">@name</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No players have been assigned to your team yet.</p>
+}
+

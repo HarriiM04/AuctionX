@@ -1,0 +1,5 @@
+# Ignore debug builds and secrets
+**/bin/
+**/obj/
+.env
+git

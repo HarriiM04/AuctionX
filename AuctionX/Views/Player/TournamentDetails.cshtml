@@ -1,0 +1,105 @@
+﻿@model AuctionX.Models.Tournament
+
+@{
+    ViewData["Title"] = "Tournament Details";
+    var t = Model;
+}
+
+<div class="text-center mb-4">
+
+    <h2>@t.Name</h2>
+</div>
+
+
+<dl class="row">
+    <dt class="col-sm-3">Date</dt>
+    <dd class="col-sm-9">@t.Date.ToShortDateString()</dd>
+
+    <dt class="col-sm-3">Venue</dt>
+    <dd class="col-sm-9">@t.Venue</dd>
+
+    <dt class="col-sm-3">Sport</dt>
+    <dd class="col-sm-9">@t.Sport.Name</dd>
+
+    <dt class="col-sm-3">Organizer</dt>
+    <dd class="col-sm-9">@t.Organizer.User.Name</dd>
+</dl>
+
+@if (TempData["RegisterMessage"] != null)
+{
+    <div class="alert alert-info">@TempData["RegisterMessage"]</div>
+}
+
+<div class="text-center mb-4">
+    <form asp-action="RegisterForTournament" method="post">
+        <input type="hidden" name="tournamentId" value="@t.Id" />
+        <button type="submit" class="btn btn-success"
+        @(ViewBag.IsAlreadyRegistered ? "disabled" : "")>
+            @(ViewBag.IsAlreadyRegistered ? "Registered" : "Register")
+        </button>
+    </form>
+</div>
+
+<hr />
+
+<h4>BidMaster Configuration</h4>
+@if (t.BidMasters.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Points/Team</th>
+                <th>Min Bid</th>
+                <th>Increase</th>
+                <th>Players/Team</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var bm in t.BidMasters)
+            {
+                <tr>
+                    <td>@bm.PointsPerTeam</td>
+                    <td>@bm.MinBid</td>
+                    <td>@bm.IncreaseOfBid</td>
+                    <td>@bm.PlayersPerTeam</td>
+                    <td>@bm.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p><em>No bidding settings available.</em></p>
+}
+
+<hr />
+
+<h4>Participating Teams</h4>
+@if (t.Teams.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Team</th>
+                <th>Budget</th>
+                <th>Captain</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var team in t.Teams)
+            {
+                <tr>
+                    <td>@team.TeamName</td>
+                    <td>@team.Budget</td>
+                  
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p><em>No teams have joined yet.</em></p>
+}

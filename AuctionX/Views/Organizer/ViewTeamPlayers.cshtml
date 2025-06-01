@@ -1,0 +1,32 @@
+﻿@model List<AuctionX.ViewModels.PlayerWithSportViewModel>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-warning">
+        @ViewBag.Message
+    </div>
+}
+
+<h2>Team Players</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Photo</th>
+            <th>Player Name</th>
+            <th>Sport Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in Model)
+        {
+            <tr>
+                <td>
+                    <img src="~/images/players/@player.PhotoUrl" alt="Player Photo" width="80" height="80" style="object-fit:cover;" />
+                </td>
+                <td>@player.Name</td>
+                <td>@player.SportCategoryName</td>
+            </tr>
+        }
+    </tbody>
+</table>

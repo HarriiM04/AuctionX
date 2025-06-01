@@ -1,0 +1,62 @@
+﻿@model IEnumerable<AuctionX.Models.TournamentPlayer>
+
+@{
+    ViewData["Title"] = "Tournament Players";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <h2 class="h4 text-center mb-4">Players for @Model.FirstOrDefault()?.Tournament?.Name</h2>
+
+                    <!-- Filter Options -->
+                    <div class="mb-3">
+                        <form method="get">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <select name="statusFilter" class="form-select">
+                                        <option value="">-- Select Status --</option>
+                                        <option value="SOLD" @@(Request.Query["statusFilter"] == "SOLD" ? "selected" : "")>SOLD</option>
+                                        <option value="UNSOLD" @@(Request.Query["statusFilter"] == "UNSOLD" ? "selected" : "")>UNSOLD</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Players Table -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Player Name</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var player in Model)
+                                {
+                                        <tr>
+                                            <td>@player.Player.User.Name</td>
+                                            <td>@player.Player.User.Email</td>
+                                            <td>@player.AvailabilityStatus</td>
+                                        </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a asp-action="Tournaments"  class="btn btn-secondary">Back to Tournament</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,117 @@
+﻿@model AuctionX.Models.Player
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Player Profile</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        .card {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,.1);
+        }
+
+        .card-header {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #007bff;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .form-control {
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            padding: 12px;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">Player Profile</div>
+            <div class="card-body text-center">
+                <!-- Display Player's Photo -->
+                @if (!string.IsNullOrEmpty(Model.Photo))
+                {
+                    <img src="~/images/players/@Url.Content(Model.Photo)" alt="Player's Photo" class="profile-photo mb-4" />
+                }
+                else
+                {
+                    <!-- Fallback image if no photo -->
+                    <img src="~/images/players/default-avatar.png" alt="Default Photo" class="profile-photo mb-4" />
+                }
+
+                <!-- Display player details -->
+                <div class="form-group text-start">
+                    <label>Name</label>
+                    <input class="form-control" value="@Model.User?.Name" readonly />
+                </div>
+                <div class="form-group text-start">
+                    <label>Email</label>
+                    <input class="form-control" value="@Model.User?.Email" readonly />
+                </div>
+                <div class="form-group text-start">
+                    <label>Mobile</label>
+                    <input class="form-control" value="@Model.MobileNumber" readonly />
+                </div>
+                <div class="form-group text-start">
+                    <label>Status</label>
+                    <input class="form-control" value="@Model.AvailabilityStatus" readonly />
+                </div>
+                <div class="form-group text-start">
+                    <label>Description</label>
+                    <textarea class="form-control" readonly rows="3">@Model.Description</textarea>
+                </div>
+
+              
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+

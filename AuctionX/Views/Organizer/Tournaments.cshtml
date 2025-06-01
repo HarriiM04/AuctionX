@@ -1,0 +1,104 @@
+﻿@model List<AuctionX.ViewModels.TournamentListViewModel>
+@{
+    ViewData["Title"] = "Tournaments";
+    var sportsList = ViewBag.Sports as List<AuctionX.Models.Sport>;
+    var selectedSport = ViewBag.SelectedSport as int?;
+}
+<!-- Bootstrap 5 JS (optional if already included globally) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<div class="container mt-4">
+    <h2>Tournaments</h2>
+
+    <!-- Success alert -->
+    @if (TempData["InstructionWarning"] != null)
+    {
+        <div class="alert alert-success">@TempData["InstructionWarning"]</div>
+    }
+
+<!-- Filter Form -->
+<form method="get" asp-action="Tournaments" class="row g-2 align-items-center mb-4">
+    <!-- Search Input -->
+    <div class="col-md-5">
+        <input type="text" name="searchQuery" class="form-control"
+               placeholder="Search by name, venue, or organizer..."
+               value="@Context.Request.Query["searchQuery"]" />
+    </div>
+
+    <!-- Sport Filter Dropdown -->
+    <div class="col-md-4">
+        <select name="sportFilter" class="form-select">
+            <option value="">All Sports</option>
+            @foreach (var sport in sportsList)
+            {
+                <option value="@sport.Id" @@(selectedSport == sport.Id ? "selected" : "")>@sport.Name</option>
+            }
+        </select>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-primary w-100">Filter</button>
+    </div>
+</form>
+
+    <!-- Create Tournament Button -->
+    <a asp-action="CreateTournament" class="btn btn-success mb-3">Create Tournament</a>
+
+    <!-- Scrollable Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Logo</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Venue</th>
+                    <th>Organizer</th>
+                    <th>Sport</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tournament in Model)
+                {
+                    <tr>
+                        <td>@tournament.Id</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(tournament.Logo))
+                            {
+                                <img src="~/src/@tournament.Logo" alt="Logo" class="img-thumbnail" style="width: 60px;" />
+                            }
+                        </td>
+                        <td>@tournament.Name</td>
+                        <td>@tournament.Date.ToShortDateString()</td>
+                        <td>@tournament.Venue</td>
+                        <td>@tournament.OrganizerName</td>
+                        <td>@tournament.SportName</td>
+                        <td>
+                            <span class="badge bg-info">@tournament.BidStatus</span>
+                        </td>
+                        <td>
+                            <a asp-action="ViewTournament" asp-route-id="@tournament.Id"
+                               class="btn btn-warning btn-sm px-2 py-1 me-1">View</a>
+                            <a asp-action="EditTournament" asp-route-id="@tournament.Id"
+                               class="btn btn-warning btn-sm px-2 py-1 me-1">Edit</a>
+                            <a asp-action="DeleteTournament" asp-route-id="@tournament.Id"
+                               class="btn btn-warning btn-sm px-2 py-1 me-1">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @if (TempData["InstructionWarning"] != null)
+    {
+        @await Html.PartialAsync("_InstructionWarning", TempData["InstructionWarning"])
+    }
+}

@@ -1,0 +1,29 @@
+﻿@model AuctionX.Models.Organizer
+
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Edit Profile</h2>
+
+    <form asp-action="EditProfile" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input asp-for="User.Name" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input asp-for="User.Email" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Mobile Number</label>
+            <input asp-for="MobileNumber" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a asp-action="Profile" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

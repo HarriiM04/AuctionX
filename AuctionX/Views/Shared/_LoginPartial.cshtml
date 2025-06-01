@@ -1,0 +1,18 @@
+﻿@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Microsoft.AspNetCore.Authentication.Google
+@using System.Security.Claims
+
+@if (User.Identity.IsAuthenticated)
+{
+   // var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+    <form asp-controller="Account" asp-action="Logout" style="display:inline;">
+    <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+
+}
+else
+{
+    <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Sign In / Sign Up</a>
+}

@@ -1,0 +1,124 @@
+﻿@model AuctionX.ViewModels.TournamentDetailViewModel
+
+@{
+    ViewData["Title"] = "Tournament Details";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <h2 class="h4 text-center mb-4">@Model.Tournament.Name - Details</h2>
+
+                    <div class="row mb-4">
+                        <!-- Left Column -->
+                        <div class="col-md-6">
+                            <p><strong>Date:</strong> @Model.Tournament.Date.ToShortDateString()</p>
+                            <p><strong>Venue:</strong> @Model.Tournament.Venue</p>
+                            <p><strong>Organizer:</strong> @Model.Tournament.Organizer?.User?.Name</p>
+                            <p><strong>Sport:</strong> @Model.Tournament.Sport?.Name</p>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-md-6 text-center">
+                            @if (!string.IsNullOrEmpty(Model.Tournament.Logo))
+                            {
+                                <img src="~/src/@Model.Tournament.Logo" class="img-fluid rounded shadow-sm" alt="Tournament Logo" width="150" />
+                            }
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Summary</h5>
+                            <p><strong>Total Players:</strong> @Model.TournamentPlayers.Count</p>
+                            <p><strong>Total Teams:</strong> @Model.Teams.Count</p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5>Bidding Summary</h5>
+                            @if (Model.BidMaster != null)
+                            {
+                                <p><strong>Points Per Team:</strong> @Model.BidMaster.PointsPerTeam</p>
+                                <p><strong>Minimum Bid:</strong> @Model.BidMaster.MinBid</p>
+                                <p><strong>Increase of Bid:</strong> @Model.BidMaster.IncreaseOfBid</p>
+                                <p><strong>Players Per Team:</strong> @Model.BidMaster.PlayersPerTeam</p>
+                                <p>
+                                    <strong>Status:</strong>
+                                    <span class="badge @(Model.BidMaster.Status == "Active" ? "bg-success" : "bg-secondary")">
+                                        @Model.BidMaster.Status
+                                    </span>
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="text-danger">No bidding settings configured for this tournament.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Teams Card with Manage Teams button -->
+            <div class="card shadow-sm border-0 mb-4">
+               
+
+                <div class="card-body">
+                    @if (Model.Teams.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Team Name</th>
+                                        <th>Budget</th>
+                                        <th>Captain</th>
+                                        <th>Roles</th>
+                                    </tr>
+                                </thead>
+								<tbody>
+                    @foreach (var team in Model.Teams)
+                                    {
+                                        <tr>
+                                            <td>@team.TeamName</td>
+                                            <td>@team.Budget</td>
+                                            <td>@Model.CaptainNames.GetValueOrDefault(team.Id, "N/A")</td>
+                                            <td>
+                                                @if (Model.CaptainRoles.ContainsKey(team.Id))
+                                                {
+                                                    <ul class="mb-0 ps-3">
+                                                        @foreach (var role in Model.CaptainRoles[team.Id])
+                                                        {
+                                                            <li>@role</li>
+                                                        }
+                                                    </ul>
+                                                }
+                                                else
+                                                {
+                                                    <span>N/A</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No teams created yet for this tournament.</p>
+                    }
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a asp-action="TournamentPlayersList" asp-route-id="@Model.Tournament.Id" class="btn btn-primary">View Players</a>
+                <a asp-action="AddTeams" asp-route-tournamentId="@Model.Tournament.Id" class="btn btn-success">Add Teams</a>
+                <a asp-action="Tournaments" class="btn btn-secondary">Back</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,64 @@
+﻿@model AuctionX.Models.Admin
+@{
+    ViewData["Title"] = "Admin Profile";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <h2 class="text-center mb-4">Admin Profile</h2>
+
+         
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input class="form-control" value="@Model.User?.Name" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input class="form-control" value="@Model.User?.Email" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Role</label>
+                    <input class="form-control" value="@Model.User?.Role" readonly />
+                </div>
+
+               
+           
+
+            <hr class="my-4" />
+
+            <h4 class="text-center mb-3">Change Password</h4>
+
+            <form method="post" asp-action="ChangePassword">
+                <div class="mb-3">
+                    <label for="oldPassword" class="form-label">Old Password</label>
+                    <input type="password" class="form-control" id="oldPassword" name="oldPassword" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="newPassword" class="form-label">New Password</label>
+                    <input type="password" class="form-control" id="newPassword" name="newPassword" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required />
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-danger">Change Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @if (TempData["InstructionWarning"] != null)
+    {
+        @await Html.PartialAsync("_InstructionWarning", TempData["InstructionWarning"])
+    }
+}

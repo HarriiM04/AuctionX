@@ -1,0 +1,63 @@
+﻿@model AuctionX.ViewModels.PlayerDashboardViewModel
+
+@if (Model.IsBidder)
+{
+    <h3>You are a Team Captain!</h3>
+    <a asp-controller="Bidder" asp-action="Dashboard" class="btn btn-primary">Go to Captain Panel</a>
+}
+else
+{
+    <h3>Hello Player.</h3>
+
+}
+
+@{
+    ViewData["Title"] = "Player Dashboard";
+}
+
+<h2>Welcome, @Model.Player.User.Name!</h2>
+
+<br />
+<h3 class="text-center">All Tournaments & Auction Status..</h3>
+<br />
+<form method="get" class="mb-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <input type="text" name="search" class="form-control" placeholder="Search by Tournament, Sport or Status" value="@ViewBag.Search" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+    </div>
+</form>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Tournament Name</th>
+            <th>Sport</th>
+            <th>Venue</th>
+            <th>Auction Status</th>
+            <th>Action</th> <!-- Added Action Column for View Button -->
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ViewBag.Tournaments)
+        {
+            <tr>
+                <td>@item.TournamentName</td>
+                <td>@item.SportName</td>
+                <td>@item.Venue</td>
+                <td>@item.Status</td>
+                <td>
+                    <a asp-controller="Player"
+                       asp-action="TournamentDetails"
+                       asp-route-id="@item.Id"
+                       class="btn btn-info btn-sm">
+                        View
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,111 @@
+﻿@model AuctionX.ViewModels.CreateTournamentViewModel
+
+@{
+    ViewData["Title"] = "Edit Tournament";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h2 class="h3 mb-4 text-black text-center">Edit Tournament</h2>
+
+            <div class="p-4 border bg-white shadow rounded-3">
+                <form asp-action="EditTournament" asp-route-id="@ViewBag.TournamentId" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <!-- Tournament Details -->
+                        <div class="col-md-6">
+                            <h4 class="mb-3">Tournament Details</h4>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="Name" class="text-black">Name</label>
+                                <input asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="Venue" class="text-black">Venue</label>
+                                <input asp-for="Venue" class="form-control" />
+                                <span asp-validation-for="Venue" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="Date" class="text-black">Date</label>
+                                <input asp-for="Date" type="date" class="form-control" />
+                                <span asp-validation-for="Date" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="SportId" class="text-black">Sport</label>
+                                <select asp-for="SportId" class="form-control" asp-items="@(new SelectList(Model.Sports, "Id", "Name"))">
+                                    <option value="">-- Select Sport --</option>
+                                </select>
+                                <span asp-validation-for="SportId" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="text-black">Logo</label><br />
+                                @if (!string.IsNullOrEmpty(Model.ExistingLogoPath))
+                                {
+                                    <img src="~/src/@Model.ExistingLogoPath" alt="Logo" width="100" class="mb-2 rounded" />
+                                }
+                                <input asp-for="LogoFile" type="file" class="form-control" />
+                            </div>
+                        </div>
+
+                        <!-- Bid Settings -->
+                        <div class="col-md-6">
+                            <h4 class="mb-3">Bid Settings</h4>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="PointsPerTeam" class="text-black">Points Per Team</label>
+                                <input asp-for="PointsPerTeam" class="form-control" />
+                                <span asp-validation-for="PointsPerTeam" class="text-danger" />
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="MinBid" class="text-black">Minimum Bid</label>
+                                <input asp-for="MinBid" class="form-control" />
+                                <span asp-validation-for="MinBid" class="text-danger" />
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="IncreaseOfBid" class="text-black">Increase of Bid</label>
+                                <input asp-for="IncreaseOfBid" class="form-control" />
+                                <span asp-validation-for="IncreaseOfBid" class="text-danger" />
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="PlayersPerTeam" class="text-black">Players Per Team</label>
+                                <input asp-for="PlayersPerTeam" class="form-control" />
+                                <span asp-validation-for="PlayersPerTeam" class="text-danger" />
+                            </div>
+
+                            <!-- Show the BidMaster Status dropdown only if no other tournament is active -->
+                            @if (!Model.IsAnyActiveTournament)
+                            {
+                                <div class="form-group mb-3">
+                                    <label asp-for="BidStatus" class="text-black">Bid Status</label>
+                                    <select asp-for="BidStatus" class="form-control">
+                                        <option value="Active" @@(Model.BidStatus == "Active" ? "selected" : "")>Active</option>
+                                        <option value="Inactive" @@(Model.BidStatus == "Inactive" ? "selected" : "")>Inactive</option>
+                                        <option value="Upcoming" @@(Model.BidStatus == "Upcoming" ? "selected" : "")>Upcoming</option>
+                                    </select>
+                                    <span asp-validation-for="BidStatus" class="text-danger" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4 text-center">
+                        <button type="submit" class="btn btn-primary px-5">Update</button>
+                        <a asp-action="Tournaments" class="btn btn-secondary ms-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,96 @@
+﻿@model AuctionX.ViewModels.TournamentDetailViewModel
+
+@{
+    ViewData["Title"] = "Tournament Details";
+}
+
+<div class="container my-4">
+    <div class="card shadow p-4">
+        <h2 class="card-title">@Model.Tournament.Name - Details</h2>
+        <hr />
+
+        <div class="row">
+            <div class="col-md-8">
+                <p><strong>Date:</strong> @Model.Tournament.Date.ToString("dd MMM yyyy")</p>
+                <p><strong>Venue:</strong> @Model.Tournament.Venue</p>
+                <p><strong>Organizer:</strong> @Model.Tournament.Organizer?.User?.Name</p>
+                <p><strong>Sport:</strong> @Model.Tournament.Sport?.Name</p>
+            </div>
+            <div class="col-md-4 text-end">
+                @if (!string.IsNullOrEmpty(Model.Tournament.Logo))
+                {
+                    <img src="~/src/@Model.Tournament.Logo" width="150" class="img-thumbnail" />
+                }
+            </div>
+        </div>
+
+        <hr />
+        <h4>Summary</h4>
+        <p><strong>Total Players:</strong> @Model.TournamentPlayers.Count</p>
+        <p><strong>Total Teams:</strong> @Model.Teams.Count</p>
+
+        @if (Model.BidMaster != null)
+        {
+            <hr />
+            <h4>Bidding Settings</h4>
+            <table class="table table-striped table-bordered w-75">
+                <tr><th>Points Per Team</th><td>@Model.BidMaster.PointsPerTeam</td></tr>
+                <tr><th>Min Bid</th><td>@Model.BidMaster.MinBid.ToString("C")</td></tr>
+                <tr><th>Bid Increment</th><td>@Model.BidMaster.IncreaseOfBid.ToString("C")</td></tr>
+                <tr><th>Players Per Team</th><td>@Model.BidMaster.PlayersPerTeam</td></tr>
+                <tr><th>Status</th><td>@Model.BidMaster.Status</td></tr>
+            </table>
+        }
+
+        <hr />
+        <div class="d-flex gap-2 mb-3">
+            <a asp-action="ViewPlayers" asp-route-tournamentId="@Model.Tournament.Id" class="btn btn-primary">View Players</a>
+          
+            <a asp-action="Tournaments" class="btn btn-secondary">Back</a>
+        </div>
+
+        <h4>Teams</h4>
+        @if (Model.Teams.Count > 0)
+        {
+            <table class="table table-hover table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Team Name</th>
+                        <th>Budget</th>
+                        <th>Captain</th>
+                        <th>Roles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var team in Model.Teams)
+                    {
+                        <tr>
+                            <td>@team.TeamName</td>
+                            <td>@team.Budget.ToString("C")</td>
+                            <td>@Model.CaptainNames.GetValueOrDefault(team.Id, "N/A")</td>
+                            <td>
+                                @if (Model.CaptainRoles.ContainsKey(team.Id))
+                                {
+                                    <ul class="mb-0">
+                                        @foreach (var role in Model.CaptainRoles[team.Id])
+                                        {
+                                            <li>@role</li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <span>N/A</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No teams created yet for this tournament.</p>
+        }
+    </div>
+</div>
