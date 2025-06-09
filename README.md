@@ -1,4 +1,4 @@
-``` markdown
+
 # AuctionX — Real-Time Player Auction Platform
 
 AuctionX is a real-time player auction web application designed for fantasy leagues, sports tournaments, and any scenario requiring fast-paced live bidding. Built from the ground up using ASP.NET Core MVC and SignalR, AuctionX enables multiple bidders to compete in real-time while providing organizers full control over auction events.
@@ -41,7 +41,7 @@ AuctionX is a real-time player auction web application designed for fantasy leag
    ```bash
    git clone https://github.com/yourusername/AuctionX.git
    cd AuctionX
-````
+
 
 2. **Configure the database connection string:**
 
