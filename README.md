@@ -39,7 +39,7 @@ AuctionX is a real-time player auction web application designed for fantasy leag
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/AuctionX.git
+   https://github.com/HarriiM04/AuctionX.git
    cd AuctionX
 
 
