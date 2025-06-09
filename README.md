@@ -1,8 +1,4 @@
 
----
-
-# README.md
-
 ````markdown
 # AuctionX — Real-Time Player Auction Platform
 
