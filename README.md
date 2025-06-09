@@ -1,6 +1,3 @@
-Got it! Here’s a detailed **README.md** for your AuctionX project — focusing fully on the development, architecture, and features, **without mentioning Docker or DevOps** since you want to avoid those for now.
-
-I’ve also included a detailed **architecture & flow explanation** at the end of the README.
 
 ---
 
@@ -127,7 +124,7 @@ AuctionX follows a clean **MVC architecture** with distinct separation of concer
 
 ## Future Enhancements
 
-* Mobile-first responsive UI improvements
+* Dockerization of full web app
 * Cloud deployment for broader access
 * Advanced analytics dashboard to track bidding patterns and tournament statistics
 
@@ -136,59 +133,3 @@ AuctionX follows a clean **MVC architecture** with distinct separation of concer
 ## Contributing
 
 Contributions, feature requests, and bug reports are welcome! Please open an issue or submit a pull request.
-
----
-
-## License
-
-MIT License © \[Your Name]
-
----
-
-## Contact
-
-For questions or collaboration, reach out at \[[your.email@example.com](mailto:your.email@example.com)].
-
----
-
-````
-
----
-
-# Flow Diagram Description (You can use this to create a diagram with any diagram tool like draw.io, Lucidchart, or even image_gen)
-
-### AuctionX System Flow:
-
-```plaintext
-+------------------+      HTTP Requests       +------------------+
-|    User Client   | <----------------------> |    MVC Controller |
-|  (Browser / App) |                         |                  |
-+------------------+                         +------------------+
-           |                                           |
-           | Real-time via SignalR                      |
-           v                                           v
-+------------------+      Broadcast Events     +------------------+
-| SignalR Hub (ASP.NET Core) ------------------> | Other Connected  |
-|  - Bid updates                               | Clients (Bidders) |
-|  - Auction status changes                    +------------------+
-|  - Player status updates                       (All participants receive updates)
-+------------------+
-
-Inside MVC:
-
-+---------------+          +--------------+         +------------+
-| Tournament    |          | Players      |         | Teams      |
-| Controller    | <------> | Player Model | <-----> | Team Model |
-+---------------+          +--------------+         +------------+
-
-Auction Logic:
-
-- Organizer actions: Start, Pause, Finalize auction  
-- Bidder actions: Place bid, receive updates  
-- Auction state maintained in backend, pushed via SignalR  
-
-````
-
----
-
-If you want, I can help generate a **diagram image** based on this flow description! Just let me know.
